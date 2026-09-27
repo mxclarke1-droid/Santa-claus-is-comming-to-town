@@ -1,0 +1,1011 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Santa Tracker</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+overflow:hidden;
+background:#020611;
+color:white;
+font-family:Arial,sans-serif;
+}
+
+#top{
+height:68px;
+position:fixed;
+top:0;
+left:0;
+right:0;
+z-index:20;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 20px;
+background:rgba(2,7,18,.96);
+border-bottom:1px solid #263149;
+}
+
+.logo{
+font-size:23px;
+font-weight:bold;
+}
+
+.live{
+color:#55ff91;
+font-weight:bold;
+}
+
+#space{
+position:fixed;
+top:68px;
+bottom:0;
+left:0;
+right:0;
+overflow:hidden;
+background:
+radial-gradient(circle at 50% 50%,#11264c 0%,#050c1c 45%,#01030a 100%);
+}
+
+/* STARS */
+
+.star{
+position:absolute;
+width:2px;
+height:2px;
+background:white;
+border-radius:50%;
+opacity:.8;
+}
+
+/* EARTH */
+
+#earth{
+position:absolute;
+width:min(62vw,620px);
+height:min(62vw,620px);
+min-width:380px;
+min-height:380px;
+left:50%;
+top:53%;
+transform:translate(-50%,-50%);
+border-radius:50%;
+background:
+radial-gradient(circle at 32% 28%,
+#70d8ff 0%,
+#238bd0 28%,
+#1261a1 53%,
+#073b6c 76%,
+#021d3d 100%);
+box-shadow:
+0 0 35px #218cff,
+0 0 90px rgba(20,130,255,.35),
+inset -55px -20px 100px rgba(0,0,0,.7);
+}
+
+/* CONTINENT SHAPES */
+
+.land{
+position:absolute;
+background:#3d9b55;
+opacity:.9;
+border-radius:48% 52% 45% 55%;
+filter:blur(.4px);
+}
+
+.l1{
+width:150px;
+height:95px;
+left:18%;
+top:25%;
+transform:rotate(-20deg);
+}
+
+.l2{
+width:100px;
+height:150px;
+left:30%;
+top:43%;
+transform:rotate(15deg);
+}
+
+.l3{
+width:180px;
+height:100px;
+left:48%;
+top:23%;
+transform:rotate(18deg);
+}
+
+.l4{
+width:110px;
+height:130px;
+left:63%;
+top:43%;
+transform:rotate(-25deg);
+}
+
+.l5{
+width:90px;
+height:80px;
+left:73%;
+top:25%;
+}
+
+.l6{
+width:150px;
+height:90px;
+left:45%;
+top:65%;
+transform:rotate(-12deg);
+}
+
+/* ICE */
+
+.ice{
+position:absolute;
+background:#e9fbff;
+opacity:.85;
+border-radius:50%;
+}
+
+.ice1{
+width:120px;
+height:45px;
+top:3%;
+left:35%;
+}
+
+.ice2{
+width:100px;
+height:38px;
+bottom:4%;
+left:39%;
+}
+
+/* ATMOSPHERE */
+
+#atmosphere{
+position:absolute;
+inset:-9px;
+border-radius:50%;
+border:5px solid rgba(90,190,255,.25);
+box-shadow:
+0 0 25px rgba(80,190,255,.6),
+inset 0 0 20px rgba(70,180,255,.3);
+pointer-events:none;
+}
+
+/* SANTA */
+
+#santa{
+position:absolute;
+z-index:8;
+font-size:62px;
+filter:
+drop-shadow(0 0 8px #fff)
+drop-shadow(0 0 18px #ff3434);
+transform:translate(-50%,-50%);
+transition:left 2s ease,top 2s ease;
+}
+
+#sleighLabel{
+position:absolute;
+z-index:9;
+background:rgba(5,10,22,.9);
+border:1px solid #ff4c4c;
+padding:5px 9px;
+border-radius:8px;
+font-size:12px;
+transform:translate(-50%,40px);
+white-space:nowrap;
+}
+
+/* FLIGHT TRAIL */
+
+.trail{
+position:absolute;
+height:3px;
+width:180px;
+background:linear-gradient(90deg,transparent,#ffd34d,transparent);
+transform-origin:right center;
+opacity:.8;
+z-index:5;
+}
+
+/* PANELS */
+
+#left{
+position:fixed;
+z-index:15;
+left:16px;
+top:84px;
+width:280px;
+}
+
+.panel{
+background:rgba(3,9,23,.92);
+border:1px solid #27344e;
+border-radius:14px;
+padding:14px;
+margin-bottom:10px;
+box-shadow:0 10px 35px rgba(0,0,0,.35);
+}
+
+.panel h3{
+margin:0 0 9px;
+font-size:15px;
+}
+
+.green{
+color:#5cff9a;
+font-weight:bold;
+}
+
+.small{
+font-size:11px;
+color:#9ba9bf;
+}
+
+.stat{
+display:flex;
+justify-content:space-between;
+margin:7px 0;
+font-size:13px;
+}
+
+#settings{
+position:fixed;
+right:16px;
+top:84px;
+z-index:20;
+padding:11px 15px;
+border-radius:9px;
+border:1px solid #36445e;
+background:rgba(3,9,23,.94);
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+/* MODAL */
+
+#modal{
+display:none;
+position:fixed;
+inset:0;
+z-index:100;
+background:rgba(0,0,0,.78);
+align-items:center;
+justify-content:center;
+}
+
+.box{
+width:min(420px,92vw);
+background:#071021;
+border:1px solid #34425b;
+border-radius:17px;
+padding:23px;
+box-shadow:0 20px 80px #000;
+}
+
+.box h2{
+margin-top:0;
+}
+
+input{
+width:100%;
+padding:11px;
+margin:7px 0 12px;
+border-radius:8px;
+border:1px solid #45536d;
+background:#101a2d;
+color:white;
+font-size:15px;
+}
+
+button{
+cursor:pointer;
+}
+
+.action{
+width:100%;
+padding:12px;
+border:0;
+border-radius:9px;
+margin-top:7px;
+font-weight:bold;
+}
+
+.red{
+background:#d62828;
+color:white;
+}
+
+.gray{
+background:#26334b;
+color:white;
+}
+
+/* ARRIVAL */
+
+#arrival{
+display:none;
+position:fixed;
+inset:0;
+z-index:200;
+align-items:center;
+justify-content:center;
+background:rgba(0,0,0,.85);
+}
+
+.arrivalBox{
+text-align:center;
+background:#071021;
+border:2px solid #e33;
+border-radius:20px;
+padding:35px;
+width:min(600px,92vw);
+}
+
+.arrivalBox h1{
+font-size:38px;
+}
+
+@media(max-width:700px){
+#left{width:220px}
+.logo{font-size:17px}
+#earth{
+min-width:310px;
+min-height:310px;
+}
+}
+</style>
+</head>
+
+<body>
+
+<div id="top">
+<div class="logo">🎅 SANTA TRACKER</div>
+<div class="live" id="status">● SYSTEM READY</div>
+</div>
+
+<div id="space">
+
+<div id="earth">
+
+<div class="land l1"></div>
+<div class="land l2"></div>
+<div class="land l3"></div>
+<div class="land l4"></div>
+<div class="land l5"></div>
+<div class="land l6"></div>
+
+<div class="ice ice1"></div>
+<div class="ice ice2"></div>
+
+<div id="atmosphere"></div>
+
+</div>
+
+<div id="santa">🎅🛷</div>
+<div id="sleighLabel">SANTA SLEIGH</div>
+
+</div>
+
+<div id="left">
+
+<div class="panel">
+<h3>📡 Santa Radio</h3>
+
+<div class="green">
+● SIGNAL LOCKED
+</div>
+
+<p id="radio">
+Waiting for Santa transmission...
+</p>
+
+<div class="small">
+FICTIONAL SANTA RADIO NETWORK
+</div>
+</div>
+
+<div class="panel">
+
+<h3>📍 Mission</h3>
+
+<div class="stat">
+<span>Location</span>
+<b id="location">North Pole</b>
+</div>
+
+<div class="stat">
+<span>Next Stop</span>
+<b id="next">Reykjavik</b>
+</div>
+
+</div>
+
+<div class="panel">
+
+<h3>🛰️ Flight Data</h3>
+
+<div class="stat">
+<span>Speed</span>
+<b id="speed">0 mph</b>
+</div>
+
+<div class="stat">
+<span>Altitude</span>
+<b id="altitude">0 ft</b>
+</div>
+
+<div class="stat">
+<span>Presents</span>
+<b id="presents">0</b>
+</div>
+
+<div class="stat">
+<span>Reindeer</span>
+<b>9</b>
+</div>
+
+</div>
+
+</div>
+
+<button id="settings">
+🔒 Parent Settings
+</button>
+
+<!-- PARENT MODAL -->
+
+<div id="modal">
+
+<div class="box">
+
+<div id="setup">
+
+<h2>🔒 Parent Settings</h2>
+
+<p class="small">
+Use a general area instead of an exact home address.
+</p>
+
+<label>Home Area</label>
+<input id="area" placeholder="Example: Atlanta">
+
+<label>Santa Arrival Time</label>
+<input id="time" type="time">
+
+<label>Create Parent PIN</label>
+<input id="pin" type="password" maxlength="8">
+
+<button class="action red" onclick="saveSettings()">
+Save Parent Settings
+</button>
+
+<button class="action gray" onclick="closeModal()">
+Cancel
+</button>
+
+</div>
+
+<div id="login" style="display:none">
+
+<h2>🔒 Parent Access</h2>
+
+<p>Enter the parent PIN.</p>
+
+<input id="loginPin" type="password">
+
+<button class="action red" onclick="login()">
+Unlock
+</button>
+
+<button class="action gray" onclick="closeModal()">
+Cancel
+</button>
+
+</div>
+
+<div id="controls" style="display:none">
+
+<h2>🎅 Parent Controls</h2>
+
+<p>
+Home Area:
+<b id="savedArea"></b>
+</p>
+
+<p>
+Arrival Time:
+<b id="savedTime"></b>
+</p>
+
+<button class="action red" onclick="startTracking()">
+▶ START SANTA TRACKING
+</button>
+
+<button class="action gray" onclick="stopTracking()">
+■ STOP TRACKING
+</button>
+
+<button class="action gray" onclick="resetSettings()">
+Reset Settings
+</button>
+
+<button class="action gray" onclick="closeModal()">
+Close
+</button>
+
+</div>
+
+</div>
+</div>
+
+<!-- ARRIVAL -->
+
+<div id="arrival">
+
+<div class="arrivalBox">
+
+<div style="font-size:65px">🎅</div>
+
+<h1>SANTA HAS ARRIVED!</h1>
+
+<p id="arrivalText"></p>
+
+<button class="action red" onclick="closeArrival()">
+Continue Tracking
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+/* =========================
+   STAR FIELD
+========================= */
+
+const space =
+document.getElementById("space");
+
+for(let i=0;i<180;i++){
+
+const star =
+document.createElement("div");
+
+star.className="star";
+
+star.style.left =
+Math.random()*100+"%";
+
+star.style.top =
+Math.random()*100+"%";
+
+star.style.opacity =
+Math.random();
+
+space.appendChild(star);
+}
+
+
+/* =========================
+   ROUTE
+========================= */
+
+const route=[
+
+["North Pole",8,24,0],
+["Reykjavik",17,27,2500],
+["London",25,33,4200],
+["Paris",29,36,3800],
+["Rome",35,39,4100],
+["Cairo",42,43,4500],
+["Dubai",48,47,4700],
+["Mumbai",54,53,4800],
+["Bangkok",62,54,5000],
+["Tokyo",73,48,5500],
+["Sydney",76,72,5600],
+["Honolulu",67,57,4300],
+["Los Angeles",58,54,6200],
+["San Francisco",54,50,6100],
+["Seattle",53,43,5900],
+["Denver",51,51,5700],
+["Dallas",52,59,6000],
+["Chicago",55,44,5800],
+["New York",61,39,6500],
+["Washington DC",60,43,6300],
+["Atlanta",57,50,6400],
+["Miami",59,61,6200],
+["Toronto",57,38,5700],
+["Mexico City",49,63,5800],
+["Panama City",50,72,5000],
+["Lima",43,80,5200],
+["Santiago",42,91,5300],
+["Buenos Aires",49,93,5400],
+["São Paulo",55,89,5600],
+["Anchorage",47,29,5200],
+["North Pole",8,24,0]
+
+];
+
+let index=0;
+let tracking=false;
+let lastMove=0;
+
+
+/* =========================
+   SANTA POSITION
+========================= */
+
+function moveSanta(){
+
+const place=route[index];
+
+const x=place[1];
+const y=place[2];
+
+document.getElementById("santa").style.left=x+"%";
+document.getElementById("santa").style.top=y+"%";
+
+document.getElementById("sleighLabel").style.left=x+"%";
+document.getElementById("sleighLabel").style.top=y+"%";
+
+document.getElementById("location").textContent=place[0];
+
+const next =
+route[(index+1)%route.length];
+
+document.getElementById("next").textContent=next[0];
+
+document.getElementById("presents").textContent=
+place[3].toLocaleString();
+
+}
+
+
+/* =========================
+   RADIO
+========================= */
+
+const messages=[
+
+"NP-01: Sleigh transmission received.",
+
+"RUDOLPH-01: Reindeer beacon detected.",
+
+"ELF-NET: Workshop relay online.",
+
+"Santa's sleigh is moving along the route.",
+
+"North Pole command confirms signal lock.",
+
+"Tracking satellites have acquired the sleigh.",
+
+"Santa radio frequency stable.",
+
+"Reindeer formation confirmed."
+
+];
+
+function radioUpdate(){
+
+document.getElementById("radio").textContent=
+messages[
+Math.floor(
+Math.random()*messages.length
+)
+];
+
+}
+
+
+/* =========================
+   FLIGHT DATA
+========================= */
+
+function updateData(){
+
+if(!tracking){
+
+document.getElementById("speed").textContent="0 mph";
+document.getElementById("altitude").textContent="0 ft";
+
+return;
+
+}
+
+document.getElementById("speed").textContent=
+(8500+Math.floor(Math.random()*3500))
+.toLocaleString()+" mph";
+
+document.getElementById("altitude").textContent=
+(85000+Math.floor(Math.random()*20000))
+.toLocaleString()+" ft";
+
+}
+
+
+/* =========================
+   ANIMATION
+========================= */
+
+function animate(time){
+
+requestAnimationFrame(animate);
+
+if(
+tracking &&
+time-lastMove>5000
+){
+
+lastMove=time;
+
+index++;
+
+if(index>=route.length)
+index=0;
+
+moveSanta();
+
+radioUpdate();
+
+}
+
+updateData();
+
+}
+
+moveSanta();
+
+requestAnimationFrame(animate);
+
+
+/* =========================
+   PARENT SETTINGS
+========================= */
+
+document.getElementById("settings")
+.onclick=function(){
+
+document.getElementById("modal")
+.style.display="flex";
+
+const saved=
+localStorage.getItem("santaPin");
+
+if(saved){
+
+document.getElementById("setup")
+.style.display="none";
+
+document.getElementById("login")
+.style.display="block";
+
+document.getElementById("controls")
+.style.display="none";
+
+}else{
+
+document.getElementById("setup")
+.style.display="block";
+
+document.getElementById("login")
+.style.display="none";
+
+document.getElementById("controls")
+.style.display="none";
+
+}
+
+};
+
+
+/* SAVE */
+
+function saveSettings(){
+
+const area=
+document.getElementById("area").value.trim();
+
+const time=
+document.getElementById("time").value;
+
+const pin=
+document.getElementById("pin").value;
+
+if(!area || !time || !pin){
+
+alert("Please complete all settings.");
+
+return;
+
+}
+
+localStorage.setItem(
+"santaArea",
+area
+);
+
+localStorage.setItem(
+"santaTime",
+time
+);
+
+localStorage.setItem(
+"santaPin",
+pin
+);
+
+alert("Parent settings saved!");
+
+showControls();
+
+}
+
+
+/* LOGIN */
+
+function login(){
+
+const entered=
+document.getElementById("loginPin").value;
+
+if(
+entered===
+localStorage.getItem("santaPin")
+){
+
+showControls();
+
+}else{
+
+alert("Incorrect PIN.");
+
+}
+
+}
+
+
+/* CONTROLS */
+
+function showControls(){
+
+document.getElementById("setup")
+.style.display="none";
+
+document.getElementById("login")
+.style.display="none";
+
+document.getElementById("controls")
+.style.display="block";
+
+document.getElementById("savedArea")
+.textContent=
+localStorage.getItem("santaArea");
+
+document.getElementById("savedTime")
+.textContent=
+localStorage.getItem("santaTime");
+
+}
+
+
+/* START */
+
+function startTracking(){
+
+tracking=true;
+
+document.getElementById("status")
+.textContent="● LIVE TRACKING";
+
+document.getElementById("status")
+.style.color="#55ff91";
+
+radioUpdate();
+
+closeModal();
+
+}
+
+
+/* STOP */
+
+function stopTracking(){
+
+tracking=false;
+
+document.getElementById("status")
+.textContent="● TRACKING PAUSED";
+
+document.getElementById("status")
+.style.color="#ffd34d";
+
+}
+
+
+/* RESET */
+
+function resetSettings(){
+
+if(confirm("Reset parent settings?")){
+
+localStorage.removeItem("santaPin");
+localStorage.removeItem("santaArea");
+localStorage.removeItem("santaTime");
+
+location.reload();
+
+}
+
+}
+
+
+/* CLOSE */
+
+function closeModal(){
+
+document.getElementById("modal")
+.style.display="none";
+
+}
+
+
+/* ARRIVAL */
+
+function checkArrival(){
+
+if(!tracking)return;
+
+const target=
+localStorage.getItem("santaTime");
+
+const area=
+localStorage.getItem("santaArea");
+
+if(!target || !area)return;
+
+const now=
+new Date()
+.toTimeString()
+.slice(0,5);
+
+if(now===target){
+
+document.getElementById("arrivalText")
+.textContent=
+"Santa is delivering presents in "+area+"!";
+
+document.getElementById("arrival")
+.style.display="flex";
+
+}
+
+}
+
+function closeArrival(){
+
+document.getElementById("arrival")
+.style.display="none";
+
+}
+
+setInterval(checkArrival,30000);
+
+</script>
+
+</body>
+</html>
+```
